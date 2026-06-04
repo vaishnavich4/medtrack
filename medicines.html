@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MedTrack - Medicines</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; }
+        .navbar {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .navbar h1 { font-size: 22px; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .nav-links a.logout { background: rgba(255,255,255,0.15); }
+        .container { padding: 30px; }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .top-bar h2 { color: #333; font-size: 22px; }
+        .btn-add {
+            background: #1a73e8;
+            color: white;
+            padding: 11px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .btn-add:hover { background: #0d47a1; }
+        .table-box {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 18px;
+            text-align: left;
+            font-size: 14px;
+        }
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fbff; }
+        .status-ok {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-expiring {
+            background: #fff3e0;
+            color: #e65100;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-expired {
+            background: #ffebee;
+            color: #c62828;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-edit {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+        .btn-edit:hover { background: #1a73e8; color: white; }
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .btn-delete:hover { background: #c62828; color: white; }
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 16px;
+        }
+        .search-box {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            width: 250px;
+            outline: none;
+        }
+        .search-box:focus { border-color: #1a73e8; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>💊 MedTrack</h1>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/medicines">Medicines</a>
+            <a href="/alerts">⚠️ Alerts</a>
+            <a href="/logout" class="logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="top-bar">
+            <h2>💊 All Medicines</h2>
+            <div style="display:flex; gap:15px; align-items:center;">
+                <input class="search-box" type="text" id="search" placeholder="🔍 Search medicine..." onkeyup="searchTable()">
+                {% if role != 'Doctor' %}
+                <a href="/add" class="btn-add">+ Add Medicine</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-box">
+            <table id="medTable">
+                <tr>
+                    <th>ID</th>
+                    <th>Medicine Name</th>
+                    <th>Quantity</th>
+                    <th>Manufacture Date</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    {% if role != 'Doctor' %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+                {% if meds %}
+                    {% for med in meds %}
+                    <tr>
+                        <td>{{ med[0] }}</td>
+                        <td><b>{{ med[1] }}</b></td>
+                        <td>{{ med[2] }} units</td>
+                        <td>{{ med[3] }}</td>
+                        <td>{{ med[4] }}</td>
+                        <td>
+                            {% if med[4] < today %}
+                                <span class="status-expired">⚠ Expired</span>
+                            {% elif med[4] <= alert_date %}
+                                <span class="status-expiring">⏰ Expiring Soon</span>
+                            {% else %}
+                                <span class="status-ok">✅ OK</span>
+                            {% endif %}
+                        </td>
+                        {% if role != 'Doctor' %}
+                        <td>
+                            <a href="/edit/{{ med[0] }}" class="btn-edit">✏️ Edit</a>
+                            <a href="/delete/{{ med[0] }}" class="btn-delete" onclick="return confirm('Delete this medicine?')">🗑️ Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="7" class="empty">No medicines found. Click + Add Medicine to get started!</td></tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    <script>
+        function searchTable() {
+            const input = document.getElementById('search').value.toLowerCase();
+            const rows = document.querySelectorAll('#medTable tr');
+            rows.forEach((row, i) => {
+                if (i === 0) return;
+                row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

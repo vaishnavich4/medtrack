@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MedTrack - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-wrapper {
+            display: flex;
+            width: 850px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        .login-left {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            width: 45%;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+        }
+        .login-left .logo { font-size: 60px; margin-bottom: 20px; }
+        .login-left h1 { font-size: 32px; margin-bottom: 10px; }
+        .login-left p { font-size: 15px; opacity: 0.85; line-height: 1.6; }
+        .features { margin-top: 30px; }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .login-right {
+            background: white;
+            width: 55%;
+            padding: 50px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .login-right h2 {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .login-right p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .role-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .role-btn .role-icon { font-size: 24px; display: block; margin-bottom: 5px; }
+        .role-btn.active {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+        .role-btn:hover { border-color: #1a73e8; }
+        label {
+            display: block;
+            color: #555;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 13px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 20px;
+        }
+        input[type="password"]:focus { border-color: #1a73e8; }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-login:hover { background: #0d47a1; }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        input[type="hidden"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-left">
+            <div class="logo">💊</div>
+            <h1>MedTrack</h1>
+            <p>Professional Medicine Inventory & Expiry Management System</p>
+            <div class="features">
+                <div class="feature">✅ Real-time Stock Tracking</div>
+                <div class="feature">✅ Expiry Date Alerts</div>
+                <div class="feature">✅ Role Based Access</div>
+                <div class="feature">✅ Dashboard & Reports</div>
+            </div>
+        </div>
+        <div class="login-right">
+            <h2>Welcome Back!</h2>
+            <p>Select your role and enter your password to continue</p>
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+            <div class="role-selector">
+                <div class="role-btn active" onclick="selectRole('Admin', this)">
+                    <span class="role-icon">👑</span>
+                    Admin
+                </div>
+                <div class="role-btn" onclick="selectRole('Staff', this)">
+                    <span class="role-icon">👨‍💼</span>
+                    Staff
+                </div>
+                <div class="role-btn" onclick="selectRole('Doctor', this)">
+                    <span class="role-icon">👨‍⚕️</span>
+                    Doctor
+                </div>
+            </div>
+            <input type="hidden" id="selectedRole" value="Admin">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+            <button class="btn-login" onclick="doLogin()">Login →</button>
+        </div>
+    </div>
+    <script>
+        function selectRole(role, el) {
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('selectedRole').value = role;
+        }
+        function doLogin() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/';
+            const r = document.createElement('input');
+            r.name = 'role';
+            r.value = document.getElementById('selectedRole').value;
+            const p = document.createElement('input');
+            p.name = 'password';
+            p.value = document.getElementById('password').value;
+            form.appendChild(r);
+            form.appendChild(p);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MedTrack - Alerts</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f4f8; }
+        .navbar {
+            background: #1a73e8;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .navbar h1 { font-size: 22px; }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 15px;
+        }
+        .navbar a:hover { text-decoration: underline; }
+        .container { padding: 30px; }
+        h2 { color: #333; font-size: 22px; margin-bottom: 20px; }
+        .alert-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #e53935;
+        }
+        .alert-card.expiring {
+            border-left-color: #ff9800;
+        }
+        .alert-info h3 { color: #333; font-size: 17px; margin-bottom: 5px; }
+        .alert-info p { color: #666; font-size: 14px; }
+        .alert-badge {
+            background: #ffebee;
+            color: #c62828;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .alert-badge.expiring {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .empty {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+            font-size: 18px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>💊 MedTrack</h1>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/medicines">Medicines</a>
+            <a href="/alerts">Alerts</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <h2>⚠️ Expiry Alerts</h2>
+        {% if meds %}
+            {% for med in meds %}
+            <div class="alert-card {% if med[4] >= today %}expiring{% endif %}">
+                <div class="alert-info">
+                    <h3>{{ med[1] }}</h3>
+                    <p>Quantity: {{ med[2] }} units &nbsp;|&nbsp; Expiry Date: {{ med[4] }}</p>
+                </div>
+                {% if med[4] < today %}
+                    <span class="alert-badge">EXPIRED</span>
+                {% else %}
+                    <span class="alert-badge expiring">Expires in {{ (med[4] - today).days }} days</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                ✅ No expiry alerts! All medicines are good.
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
