@@ -1,10 +1,11 @@
+import os
 from flask import Flask, render_template, request, redirect, session, url_for
 import mysql.connector
 from datetime import date, timedelta
-import os
 
 app = Flask(__name__)
 app.secret_key = "medtrack123"
+
 DB = {
     "host": os.environ.get("MYSQLHOST", "localhost"),
     "user": os.environ.get("MYSQLUSER", "root"),
@@ -186,6 +187,7 @@ def alerts():
 def logout():
     session.clear()
     return redirect("/")
+
 init_db()
 
 if __name__ == "__main__":
