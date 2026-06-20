@@ -4,12 +4,12 @@ from datetime import date, timedelta
 
 app = Flask(__name__)
 app.secret_key = "medtrack123"
-
 DB = {
-    "host": "localhost",
-    "user": "root",
-    "password": "root123",
-    "database": "medicine_db"
+    "host": os.environ.get("MYSQLHOST", "localhost"),
+    "user": os.environ.get("MYSQLUSER", "root"),
+    "password": os.environ.get("MYSQLPASSWORD", "root123"),
+    "database": os.environ.get("MYSQLDATABASE", "medicine_db"),
+    "port": int(os.environ.get("MYSQLPORT", 3306))
 }
 
 def get_db():
@@ -185,7 +185,7 @@ def alerts():
 def logout():
     session.clear()
     return redirect("/")
+init_db()
 
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
