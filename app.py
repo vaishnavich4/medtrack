@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import mysql.connector
 from datetime import date, timedelta
+import os
 
 app = Flask(__name__)
 app.secret_key = "medtrack123"
