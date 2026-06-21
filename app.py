@@ -7,11 +7,11 @@ app = Flask(__name__)
 app.secret_key = "medtrack123"
 
 DB = {
-    "host": os.environ.get("MYSQLHOST", "localhost"),
-    "user": os.environ.get("MYSQLUSER", "root"),
-    "password": os.environ.get("MYSQLPASSWORD", "root123"),
-    "database": os.environ.get("MYSQLDATABASE", "medicine_db"),
-    "port": int(os.environ.get("MYSQLPORT", 3306))
+    "host": "thomas.proxy.rlwy.net",
+    "user": "root",
+    "password": "cOUFrqqYvAqvMSelQuXdiUUpOMQVHWED",
+    "database": "railway",
+    "port": 48450
 }
 
 def get_db():
