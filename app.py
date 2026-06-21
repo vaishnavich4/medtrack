@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import mysql.connector
 from datetime import date, timedelta
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='.')
 app.secret_key = "medtrack123"
 
 DB = {
